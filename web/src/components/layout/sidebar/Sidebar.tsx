@@ -1,12 +1,13 @@
 "use client";
 
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 
 import { SIDEBAR_OPEN_BY_DEFAULT } from "./sidebar.constants";
+import { sidebarItems } from "./sidebar.items";
 
 type SidebarProps = {
   defaultOpen?: boolean;
@@ -17,6 +18,7 @@ export function Sidebar({
 }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const titleId = useId();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!isOpen) {
@@ -46,6 +48,7 @@ export function Sidebar({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
+        aria-label="Abrir menu"
         aria-controls="app-sidebar"
         aria-expanded={isOpen}
         className={`fixed left-4 top-4 z-40 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-lg shadow-slate-300/35 transition-all hover:-translate-y-0.5 hover:bg-slate-50 ${
@@ -75,6 +78,14 @@ export function Sidebar({
         }`}
       >
         <div className="flex items-start justify-between border-b border-slate-200 px-5 py-5">
+          <div className="space-y-1">
+            <p id={titleId} className="text-sm font-semibold text-slate-900">
+              Menu
+            </p>
+            <p className="text-sm text-slate-500">
+              Navegue pelas principais áreas da plataforma.
+            </p>
+          </div>
 
           <button
             type="button"
@@ -86,17 +97,35 @@ export function Sidebar({
           </button>
         </div>
 
-        <nav className="flex flex-1 flex-col gap-2 p-4">
-          <Link
-            href="/"
-            onClick={() => setIsOpen(false)}
-            className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition-all hover:border-slate-300 hover:bg-white hover:text-slate-950"
-          >
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white transition-transform group-hover:scale-105">
-              <HomeRoundedIcon fontSize="small" />
-            </span>
-            <span>Home</span>
-          </Link>
+        <nav aria-label="Navegação principal" className="flex flex-1 flex-col gap-2 p-4">
+          {sidebarItems.map(({ icon: Icon, title, route }) => {
+            const isActive =
+              route === "/"
+                ? pathname === route
+                : pathname === route || pathname.startsWith(`${route}/`);
+
+            return (
+              <Link
+                key={route}
+                href={route}
+                onClick={() => setIsOpen(false)}
+                className={`group flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-semibold transition-all ${
+                  isActive
+                    ? "border-slate-900 bg-slate-900 text-white shadow-lg shadow-slate-300/35"
+                    : "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-white hover:text-slate-950"
+                }`}
+              >
+                <span
+                  className={`inline-flex h-10 w-10 items-center justify-center rounded-xl transition-transform group-hover:scale-105 ${
+                    isActive ? "bg-white/15 text-white" : "bg-slate-900 text-white"
+                  }`}
+                >
+                  <Icon fontSize="small" />
+                </span>
+                <span>{title}</span>
+              </Link>
+            );
+          })}
         </nav>
       </aside>
     </>
