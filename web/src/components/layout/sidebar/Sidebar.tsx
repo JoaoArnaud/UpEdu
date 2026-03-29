@@ -78,14 +78,6 @@ export function Sidebar({
         }`}
       >
         <div className="flex items-start justify-between border-b border-slate-200 px-5 py-5">
-          <div className="space-y-1">
-            <p id={titleId} className="text-sm font-semibold text-slate-900">
-              Menu
-            </p>
-            <p className="text-sm text-slate-500">
-              Navegue pelas principais áreas da plataforma.
-            </p>
-          </div>
 
           <button
             type="button"
